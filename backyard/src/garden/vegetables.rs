@@ -1,5 +1,4 @@
-#[device(Debug)]
-
+#[derive(Debug)]
 pub struct Asparagus {
     
 }
