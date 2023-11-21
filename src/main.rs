@@ -1,126 +1,100 @@
+use std::fs::File;
+// use std::io::ErrorKind;
+use std::io;
+use std::io::Read;
+
+// // Result is an enum with two variants, Ok and Err
 // fn main() {
-//     let five = Some(5);
-//     let six = plus_one(five);// plus_one 所有权不会转移么？
+//     let f = File::open("Cargo.toml");
 
-//     let none = plus_one(None);
+//     let f = match f {
+//         Ok(file) => file,
+//         Err(error) => {
+//             panic!("Problem opening the file: {:?}", error)
+//         },
+//     };
 
-//     println!("five: {:?}", five);
+//     println!("f is {:?}", f); // { fd: 3, path: "/workspaces/rust-demo/Cargo.toml", read: true, write: false }
 // }
 
-// fn plus_one(x: Option<i32>) -> Option<i32> {
-//     match x {
-//         Some(i) => Some(i + 1),
-//         None => None,
-//     }
-// }
-
-
-// fn main() {
-//     let v = Some(0u8);
-
-//     if let Some(3) = v {
-//         println!("three");
-//     } else {
-//         println!("others");
-//     }
-// }
 
 // fn main() {
-//     let mut v: Vec<i32> = Vec::new();
-//     v.push(1);
+//     let f = File::open("Cargo.toml");
 
-//     let mut v = vec![1, 2, 3]; // vec! 宏
-//     let third: &i32 = &v[2];
+//     let f = match f {
+//         Ok(file) => file,
+//         Err(error) => {
+//             match error.kind() {
+//                 ErrorKind::NotFound => match File::create("Cargo.toml") {
+//                     Ok(fc) => fc,
+//                     Err(e) => panic!("Problem creating the file: {:?}", e),
+//                 },
+//                 other_error => panic!("Problem opening the file: {:?}", other_error),
+//             }
+//         },
+//     };
 
-//     println!("third: {}", third);
+//     println!("f is {:?}", f); // { fd: 3, path: "/workspaces/rust-demo/Cargo.toml", read: true, write: false }
+// }
 
-//     match v.get(2) {
-//         Some(third) => println!("third: {}", third),
-//         None => println!("None"),
-//     }
 
-//     for i in &mut v {
-//         *i += 50;
-//     }
-
-//     for i in &v {
-//         println!("i: {}", i);
-//     }
+// fn main() {
+//     let f = File::open("vv.toml").unwrap_or_else(|error| {
+//         if error.kind() == ErrorKind::NotFound {
+//             File::create("vv.toml").unwrap_or_else(|error| {
+//                 panic!("Problem creating the file: {:?}", error);
+//             })
+//         } else {
+//             panic!("Problem opening the file: {:?}", error);
+//         }
+//     });
 // }
 
 // fn main() {
-//     let data = "initial contents";
-//     let s = data.to_string();
+//     // unwrap: 如果 Result 值是 Ok，unwrap 会返回 Ok 中的值, 如果 Result 是 Err，unwrap 会为我们调用 panic!
+//     let f = File::open("vv.toml").unwrap();
 
-//     let s = "initial contents".to_string();
-    
-//     let s = String::from("initial contents");
-
-//     // push_str 切片
-//     // push 单个字符
-
-//     let mut s1 = String::from("hello, ");
-//     let s2 = "world";
-//     s1.push_str(s2);
-    
-//     println!("s1 is {}", s1);
-
-//     let mut s = String::from("lo");
-//     s.push('l');
-//     println!("s is {}", s);
-
-//     let s1 = String::from("hello, ");
-//     let s2 = String::from("world");
-//     let s3 = s1 + &s2; // s1 被移动了，不能继续使用
-
-//     println!("s3 is {}", s3);
-
-//     // format! 宏
-//     let s1 = String::from("tic");
-//     let s2 = String::from("tac");
-//     let s3 = String::from("toe");
-
-//     let s = format!("{}-{}-{}", s1, s2, s3);
-
-//     println!("s is {}", s);
+//     // expect: 与 unwrap 一样，expect 允许我们选择 panic! 的错误信息
+//     let f = File::open("vv.toml").expect("Failed to open vv.toml");
 // }
 
-use std::collections::HashMap;
+// fn read_username_from_file() -> Result<String, io::Error> {
+//     let f = File::open("vv.toml");
+
+//     let mut f = match f {
+//         Ok(file) => file,
+//         Err(e) => return Err(e),
+//     };
+
+//     let mut s = String::new();
+//     match f.read_to_string(&mut s) { // read_to_string 返回一个 Result，所以需要处理
+//         Ok(_) => Ok(s),
+//         Err(e) => Err(e),
+//     }
+// }
+// fn main() {
+//     let result = read_username_from_file();
+// }
+
+// fn read_username_from_file() -> Result<String, io::Error> {
+//     let mut f = File::open("Cargo.toml")?;
+
+//     let mut s = String::new();
+//     f.read_to_string(&mut s)?;
+
+//     Ok(s)
+// }
+
+fn read_username_from_file() -> Result<String, io::Error> {
+    let mut s = String::new();
+
+    // ? 运算符会自动将错误值传播给调用者
+    File::open("Cargo.toml")?.read_to_string(&mut s)?;
+
+    Ok(s)
+}
 fn main() {
-    // hashMap K V 类型必须一致
-    let mut scores = HashMap::new();
-    scores.insert(String::from("Blue"), 10);
-    scores.insert(String::from("Yellow"), 50);
+    let result = read_username_from_file();
 
-    // collect 方法
-    let teams = vec![String::from("Blue"), String::from("Yellow")];
-    let initial_scores = vec![10, 50];
-
-    let mut scores1: HashMap<_, _> = 
-        teams.iter().zip(initial_scores.iter()).collect();
-
-    println!("scores1 is {:?}", scores1);
-
-    // get -> Option
-    let team_name = String::from("Blue");
-    let score = scores1.get(&team_name);
-    println!("score is {:?}", score);
-
-    // 遍历
-    for (key, value) in &scores1 {
-        println!("{}: {}", key, value);
-    }
-
-    // 更新
-    let mut scores = HashMap::new();
-    scores.insert(String::from("Blue"), 10);
-    scores.insert(String::from("Blue"), 25); // 覆盖
-
-    println!("scores is {:?}", scores);
-
-    // 只在键没有对应值时插入
-    scores.entry(String::from("Yellow")).or_insert(50);
-    scores.entry(String::from("Blue")).or_insert(50); // 不会覆盖
-
-    println!("scores is {:?}", scores);
+    println!("result is {:?}", result);
 }
