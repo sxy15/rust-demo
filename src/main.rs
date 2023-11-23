@@ -1,12 +1,11 @@
 fn main() {
-    {
-        let x;
-        {
-            let y = 5;
-            // x = &y;
-            x = y; 
-        }
+    let x = vec![1, 2, 3, 4, 5];
 
-        println!("{}", x);
-    }
+    let equal_to_x = move |z| z == x;
+
+    // println!("can't use x here: {:?}", x);
+
+    let y = vec![1, 2, 3, 4, 5];
+
+    assert!(equal_to_x(y));
 }
