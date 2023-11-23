@@ -1,11 +1,8 @@
 fn main() {
-    let x = vec![1, 2, 3, 4, 5];
+    let v1 = vec![1, 2, 3];
+    let v1_iter = v1.iter();
 
-    let equal_to_x = move |z| z == x;
-
-    // println!("can't use x here: {:?}", x);
-
-    let y = vec![1, 2, 3, 4, 5];
-
-    assert!(equal_to_x(y));
+    for val in v1_iter {
+        println!("Got: {}", val);
+    }
 }
